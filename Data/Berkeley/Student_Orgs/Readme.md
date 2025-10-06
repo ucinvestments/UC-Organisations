@@ -1,0 +1,19 @@
+curl 'https://callink.berkeley.edu/api/discovery/search/organizations?orderBy%5B0%5D=UpperName%20asc&top=10&filter=&query=&skip=0' \
+  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0' \
+  -H 'Accept: application/json' \
+  -H 'Accept-Language: en-US,en;q=0.5' \
+  -H 'Accept-Encoding: gzip, deflate, br, zstd' \
+  -H 'Referer: https://callink.berkeley.edu/organizations' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  -H 'X-XSRF-TOKEN: CfDJ8Az9GcAD4TpIm2NmyW6ywWFj7gN6jC2dcKmzVBYXIv9242VN3NBkP_IOb7Z5M4tTLg29vPvzsH1igAc6ptMsVuGsVepisPvk2NNFqQIS4_rFNwSPWbsBlXSwR0vMrKqdCS82ChSjASP6XW68cqQaxZ4' \
+  -H 'X-Javascript-Version: undefined' \
+  -H 'Sec-GPC: 1' \
+  -H 'Connection: keep-alive' \
+  -H 'Cookie: TiPMix=74.40431576594074; x-ms-routing-name=self; .AspNetCore.Antiforgery.Pnjfq5WAl6o=CfDJ8Az9GcAD4TpIm2NmyW6ywWFTPT2R6ixcsW848EvIXm-qG1DcnSKjXJxzRF8Z02R8nm1Nb8mmuRdPnKPyEvVWgkgfX98vXR5VMYNuOfoVhvcO4KWBNs7_n3AMgbuEViRQ1IFwq8fWeY_z_MtjWNhGZAE' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'Priority: u=4' \
+  -H 'TE: trailers'
