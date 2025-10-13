@@ -1,3 +1,9 @@
+The code is in /Scraper
+
+
+
+
+
 curl 'https://callink.berkeley.edu/api/discovery/search/organizations?orderBy%5B0%5D=UpperName%20asc&top=10&filter=&query=&skip=0' \
   -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0' \
   -H 'Accept: application/json' \

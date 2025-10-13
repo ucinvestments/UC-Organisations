@@ -686,21 +686,47 @@ func (s *Scraper) getTotalCount() (int, error) {
 	return apiResp.Count, nil
 }
 
-// saveOrganization saves an individual organization to a JSON file
+// saveOrganization saves an individual organization to a JSON file in the new directory structure
 func (s *Scraper) saveOrganization(org Organization) error {
+	// Generate filename
 	filename := fmt.Sprintf("org_%v.json", org.ID)
 	if org.WebsiteKey != "" && org.WebsiteKey != "null" {
 		filename = fmt.Sprintf("org_%v_%s.json", org.ID, sanitizeFilename(org.WebsiteKey))
 	}
 
-	filepath := filepath.Join("data", filename)
-
+	// Use websiteKey as organization name, fallback to ID if not available
+	orgName := sanitizeFilename(org.WebsiteKey)
+	if orgName == "" || orgName == "null" {
+		orgName = fmt.Sprintf("org_%v", org.ID)
+	}
+	
+	// Extract website domain from socialMedia.externalWebsite
+	websiteDomain := extractDomainFromURL(org.SocialMedia.ExternalWebsite)
+	
+	// Create directory structure
+	callinkDir, _, err := createOrganizationDirectories(orgName, websiteDomain)
+	if err != nil {
+		// Fallback to old method if directory creation fails
+		log.Printf("Warning: Failed to create new directory structure for org %v: %v. Using old method.", org.ID, err)
+		oldFilepath := filepath.Join("data", filename)
+		
+		data, err := json.MarshalIndent(org, "", "  ")
+		if err != nil {
+			return err
+		}
+		
+		return os.WriteFile(oldFilepath, data, 0644)
+	}
+	
+	// Save to new directory structure
+	newFilepath := filepath.Join(callinkDir, filename)
+	
 	data, err := json.MarshalIndent(org, "", "  ")
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(filepath, data, 0644)
+	return os.WriteFile(newFilepath, data, 0644)
 }
 
 // saveCombinedFile saves all organizations to a single combined file
@@ -814,6 +840,67 @@ func (s *Scraper) markOrgCompleted(orgID string) {
 	}
 
 	s.progress.CompletedOrgs = append(s.progress.CompletedOrgs, orgID)
+}
+
+// extractDomainFromURL extracts and cleans the domain from a URL
+func extractDomainFromURL(url string) string {
+	if url == "" {
+		return ""
+	}
+	
+	// Remove protocol if present
+	url = strings.TrimPrefix(url, "https://")
+	url = strings.TrimPrefix(url, "http://")
+	
+	// Remove www. prefix if present
+	url = strings.TrimPrefix(url, "www.")
+	
+	// Split by / to get just the domain part
+	parts := strings.Split(url, "/")
+	if len(parts) > 0 {
+		domain := parts[0]
+		
+		// Remove any trailing dots or spaces
+		domain = strings.TrimRight(domain, ". \t\n\r")
+		
+		return domain
+	}
+	
+	return ""
+}
+
+// createOrganizationDirectories creates the directory structure for an organization
+func createOrganizationDirectories(orgName, websiteDomain string) (string, string, error) {
+	baseDir := "/home/okita/Scripts/Organising/UC-Organisations/Data/campuses/berkeley/student_orgs"
+	
+	// Create the organization directory
+	orgDir := filepath.Join(baseDir, orgName)
+	if err := os.MkdirAll(orgDir, 0755); err != nil {
+		return "", "", fmt.Errorf("failed to create org directory: %w", err)
+	}
+	
+	// Create the callink subdirectory
+	callinkDir := filepath.Join(orgDir, "callink")
+	if err := os.MkdirAll(callinkDir, 0755); err != nil {
+		return "", "", fmt.Errorf("failed to create callink directory: %w", err)
+	}
+	
+	// Create the website subdirectory and README if domain exists
+	var websiteDir string
+	if websiteDomain != "" {
+		websiteDir = filepath.Join(orgDir, websiteDomain)
+		if err := os.MkdirAll(websiteDir, 0755); err != nil {
+			return "", "", fmt.Errorf("failed to create website directory: %w", err)
+		}
+		
+		// Create empty README.md file
+		readmePath := filepath.Join(websiteDir, "README.md")
+		if err := os.WriteFile(readmePath, []byte(""), 0644); err != nil {
+			return "", "", fmt.Errorf("failed to create README.md: %w", err)
+		}
+	}
+	
+	return callinkDir, websiteDir, nil
 }
 
 // sanitizeFilename removes or replaces invalid characters for filenames
