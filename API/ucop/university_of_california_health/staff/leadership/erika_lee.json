@@ -1,0 +1,11 @@
+{
+  "name": "Erika Lee",
+  "title": "Executive Assistant to AVP",
+  "department": "Leadership",
+  "organization": "University of California Health",
+  "contact": {
+    "phone": "(510) 987-9055",
+    "email": "erika.lee@ucop.edu"
+  },
+  "data_source": "https://www.ucop.edu/uc-health/staff/index.html"
+}

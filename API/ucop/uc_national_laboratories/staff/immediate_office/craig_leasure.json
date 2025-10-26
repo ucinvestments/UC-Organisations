@@ -1,0 +1,10 @@
+{
+  "name": "Craig Leasure",
+  "title": "Senior Advisor",
+  "department": "Immediate Office",
+  "organization": "UC National Laboratories",
+  "contact": {
+    "phone": "(510) 987-0338"
+  },
+  "data_source": "https://www.ucop.edu/laboratory-management/staff/index.html"
+}

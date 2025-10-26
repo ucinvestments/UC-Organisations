@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  ucop-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ucop-scraper
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount data directories to persist scraped data
+      - ./academic_affairs:/app/academic_affairs
+      - ./ethics_compliance_audit_services:/app/ethics_compliance_audit_services
+      - ./external_relations_communications:/app/external_relations_communications
+      - ./uc_finance:/app/uc_finance
+      - ./uc_investments:/app/uc_investments
+      - ./uc_legal:/app/uc_legal
+      - ./uc_national_laboratories:/app/uc_national_laboratories
+      - ./uc_operations:/app/uc_operations
+      - ./university_of_california_health:/app/university_of_california_health
+      - ./systemwide_office_of_civil_rights:/app/systemwide_office_of_civil_rights
+      # Mount logs directory
+      - ./logs:/app/logs
+      # Mount config for easy updates without rebuild
+      - ./config.py:/app/config.py:ro
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - ucop-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/api/status')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  ucop-network:
+    driver: bridge
+
+volumes:
+  # Named volumes for persistence (optional - using bind mounts above)
+  ucop-data:
+    driver: local

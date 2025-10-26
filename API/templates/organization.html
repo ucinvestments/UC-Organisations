@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ org_data.name }} - UCOP Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{ org_data.name }}</h1>
+            <a href="/" class="back-link">← Back to Dashboard</a>
+        </header>
+
+        <div class="org-detail">
+            <section class="org-info">
+                <h2>Organization Information</h2>
+
+                <div class="info-field">
+                    <strong>Description:</strong>
+                    <p>{{ org_data.description }}</p>
+                </div>
+
+                <div class="info-field">
+                    <strong>Data Source:</strong>
+                    <p><a href="{{ org_data.data_source }}" target="_blank">{{ org_data.data_source }}</a></p>
+                </div>
+
+                {% if org_data.sub_departments %}
+                <div class="info-field">
+                    <strong>Sub-Departments:</strong>
+                    <ul>
+                        {% for dept in org_data.sub_departments %}
+                        <li>{{ dept.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if org_data.contact %}
+                <div class="info-field">
+                    <strong>Contact:</strong>
+                    <ul>
+                        {% for key, value in org_data.contact.items() %}
+                        <li><strong>{{ key|title }}:</strong> {{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="stats-section">
+                <h2>Statistics</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">{{ stats.staff_count }}</div>
+                        <div class="stat-label">Total Staff</div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-value">{{ stats.departments|length }}</div>
+                        <div class="stat-label">Departments</div>
+                    </div>
+
+                    {% if stats.last_scraped %}
+                    <div class="stat-box">
+                        <div class="stat-value">{{ stats.last_scraped[:10] }}</div>
+                        <div class="stat-label">Last Scraped</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if stats.departments %}
+                <div class="departments-list">
+                    <h3>Departments</h3>
+                    <ul>
+                        {% for dept in stats.departments %}
+                        <li>{{ dept }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="staff-section">
+                <h2>Staff Directory ({{ staff_list|length }})</h2>
+
+                <div class="staff-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Title</th>
+                                <th>Department</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for staff in staff_list %}
+                            <tr>
+                                <td>{{ staff.name }}</td>
+                                <td>{{ staff.title }}</td>
+                                <td>{{ staff.department }}</td>
+                                <td>{{ staff.contact.phone if staff.contact.phone else '-' }}</td>
+                                <td>
+                                    {% if staff.contact.email %}
+                                    <a href="mailto:{{ staff.contact.email }}">{{ staff.contact.email }}</a>
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="actions">
+                <button onclick="scrapeOrg('{{ org_dir }}')" class="btn btn-primary">Re-Scrape This Organization</button>
+                <a href="/api/organization/{{ org_dir }}" class="btn btn-secondary" target="_blank">View JSON</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function scrapeOrg(orgDir) {
+            if (!confirm('Start re-scraping this organization?')) return;
+
+            fetch(`/scrape/${orgDir}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message);
+                    setTimeout(() => location.reload(), 2000);
+                })
+                .catch(err => alert('Error: ' + err));
+        }
+    </script>
+</body>
+</html>

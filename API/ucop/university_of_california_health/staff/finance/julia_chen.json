@@ -1,0 +1,11 @@
+{
+  "name": "Julia Chen",
+  "title": "Financial Analyst",
+  "department": "Finance",
+  "organization": "University of California Health",
+  "contact": {
+    "phone": "(510) 587-6497",
+    "email": "julia.chen@ucop.edu"
+  },
+  "data_source": "https://www.ucop.edu/uc-health/staff/index.html"
+}

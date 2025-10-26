@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCOP Scraper Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>UCOP Organization Scraper Dashboard</h1>
+            <p>Manage and monitor web scraping for UC Office of the President organizations</p>
+        </header>
+
+        <nav>
+            <a href="/">Dashboard</a>
+            <a href="/logs">View Logs</a>
+            <a href="/api/status">API Status</a>
+        </nav>
+
+        <div class="actions">
+            <button onclick="scrapeAll()" class="btn btn-primary">Scrape All Organizations</button>
+        </div>
+
+        <div class="organizations">
+            <h2>Organizations ({{ organizations|length }})</h2>
+
+            <div class="org-grid">
+                {% for org in organizations %}
+                <div class="org-card">
+                    <h3>{{ org.display_name }}</h3>
+
+                    <div class="org-stats">
+                        <div class="stat">
+                            <span class="label">Staff Count:</span>
+                            <span class="value">{{ org.staff_count }}</span>
+                        </div>
+
+                        <div class="stat">
+                            <span class="label">Organization File:</span>
+                            <span class="value">
+                                {% if org.has_organization_file %}
+                                    ✓ Yes
+                                {% else %}
+                                    ✗ No
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        {% if org.departments %}
+                        <div class="stat">
+                            <span class="label">Departments:</span>
+                            <span class="value">{{ org.departments|length }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if org.last_scraped %}
+                        <div class="stat">
+                            <span class="label">Last Scraped:</span>
+                            <span class="value">{{ org.last_scraped[:19] }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="org-actions">
+                        <a href="/organization/{{ org.org_dir }}" class="btn btn-small">View Details</a>
+                        <button onclick="scrapeOrg('{{ org.org_dir }}')" class="btn btn-small btn-secondary">Scrape Now</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function scrapeOrg(orgDir) {
+            if (!confirm(`Start scraping for ${orgDir}?`)) return;
+
+            fetch(`/scrape/${orgDir}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message);
+                    setTimeout(() => location.reload(), 2000);
+                })
+                .catch(err => alert('Error: ' + err));
+        }
+
+        function scrapeAll() {
+            if (!confirm('Start scraping all organizations? This may take a while.')) return;
+
+            fetch('/scrape/all', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message);
+                    setTimeout(() => location.reload(), 2000);
+                })
+                .catch(err => alert('Error: ' + err));
+        }
+
+        // Auto-refresh every 30 seconds
+        setTimeout(() => location.reload(), 30000);
+    </script>
+</body>
+</html>

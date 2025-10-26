@@ -1,0 +1,11 @@
+{
+  "name": "Jane Schnorrenberg",
+  "title": "Executive Assistant",
+  "department": "Immediate Office",
+  "organization": "UC Finance",
+  "contact": {
+    "phone": "(510) 987-9604",
+    "email": "Jane.Schnorrenberg@ucop.edu"
+  },
+  "data_source": "https://www.ucop.edu/finance-office/staff/index.html"
+}

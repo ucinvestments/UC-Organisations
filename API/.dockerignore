@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Logs (will be mounted as volume)
+logs/*.log
+
+# Documentation
+*.md
+!README.md
+
+# Data files (will be mounted as volumes)
+*/staff/**/*.json
+*/organization.json
+*/scrape_stats.json
+
+# PDFs and other resources
+*.pdf
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Other
+.env
+*.bak
+*.tmp

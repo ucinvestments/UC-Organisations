@@ -1,0 +1,11 @@
+{
+  "name": "Eileen Foster",
+  "title": "Chief of Staff",
+  "department": "Leadership",
+  "organization": "University of California Health",
+  "contact": {
+    "phone": "(510) 287-3830",
+    "email": "eileen.foster@ucop.edu"
+  },
+  "data_source": "https://www.ucop.edu/uc-health/staff/index.html"
+}

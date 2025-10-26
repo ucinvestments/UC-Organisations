@@ -1,0 +1,11 @@
+{
+  "name": "Sutton Bennett",
+  "title": "Executive Assistant",
+  "department": "Immediate Office",
+  "organization": "UC Operations",
+  "contact": {
+    "phone": "(510) 987-9034",
+    "email": "sutton.bennett@ucop.edu"
+  },
+  "data_source": "https://www.ucop.edu/uc-operations/staff/index.html"
+}

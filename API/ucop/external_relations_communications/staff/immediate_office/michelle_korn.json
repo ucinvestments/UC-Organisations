@@ -1,0 +1,10 @@
+{
+  "name": "Michelle Korn",
+  "title": "Executive Assistant to the Senior Vice President",
+  "department": "Immediate Office",
+  "organization": "External Relations and Communications",
+  "contact": {
+    "email": "Michelle.Korn@ucop.edu"
+  },
+  "data_source": "https://ucop.edu/external-relations-communications/staff/index.html"
+}
