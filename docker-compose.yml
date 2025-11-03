@@ -1,0 +1,27 @@
+services:
+  uc-organizations-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uc-organizations-scraper
+    network_mode: host
+    volumes:
+      # Mount handlers directory to persist scraped data
+      - ./handlers:/app/handlers
+      # Mount logs directory
+      - ./logs:/app/logs
+      # Mount config for easy updates without rebuild
+      - ./config.py:/app/config.py:ro
+    env_file:
+      - .env
+    environment:
+      - FLASK_APP=app.py
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/api/status')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
