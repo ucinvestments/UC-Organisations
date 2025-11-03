@@ -13,23 +13,19 @@ load_dotenv()
 @contextmanager
 def get_connection():
     """Get database connection."""
-    conn = psycopg.connect(os.getenv("DATABASE_URL"))
-    try:
+    with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
         yield conn
-    finally:
-        conn.close()
 
 
 @contextmanager
 def get_cursor(row_factory=dict_row):
     """Get database cursor with dict rows."""
-    with get_connection() as conn:
+    with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
         with conn.cursor(row_factory=row_factory) as cur:
             yield cur
-            conn.commit()
 
 
-# Legacy compatibility for existing code
+# Legacy compatibility
 class DatabaseConnection:
     def get_cursor(self, row_factory=dict_row):
         return get_cursor(row_factory)
