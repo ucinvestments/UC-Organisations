@@ -119,6 +119,279 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Org Chart System */
+.org-chart {
+  width: 100%;
+  overflow-x: auto;
+  padding: 1.5rem 0;
+}
+
+.org-chart__root,
+.org-chart ul {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding-left: 0;
+  position: relative;
+}
+
+.org-chart ul {
+  margin-top: 3rem;
+}
+
+.org-chart__item {
+  list-style: none;
+  text-align: center;
+  position: relative;
+  padding: 2rem 1rem 0;
+  min-width: 15rem;
+}
+
+.org-chart__item::before,
+.org-chart__item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  border-top: 2px solid #dfe6f4;
+  width: 50%;
+  height: 2rem;
+}
+
+.org-chart__item::before {
+  left: -50%;
+}
+
+.org-chart__item::after {
+  right: -50%;
+}
+
+.org-chart__item:only-child::before,
+.org-chart__item:only-child::after {
+  display: none;
+}
+
+.org-chart__item:first-child::after,
+.org-chart__item:last-child::before {
+  border-top: none;
+}
+
+.org-chart__item > ul::before {
+  content: '';
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  border-left: 2px solid #dfe6f4;
+  height: 2rem;
+}
+
+.org-chart__item--root {
+  padding-top: 0;
+}
+
+.org-chart__item--root::before,
+.org-chart__item--root::after,
+.org-chart__item--root > ul::before {
+  display: none;
+}
+
+.org-card {
+  border: 2px solid #dfe6f4;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  background: white;
+  min-width: 14rem;
+  max-width: 18rem;
+  text-align: left;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.org-card:hover {
+  transform: translateY(-4px);
+}
+
+.org-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.org-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+.org-card__text {
+  flex: 1;
+}
+
+.org-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #102a43;
+}
+
+.org-card__meta {
+  font-size: 0.85rem;
+  color: #486581;
+  margin-top: 0.25rem;
+}
+
+.org-card__description {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #243b53;
+}
+
+.org-card__actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.org-card__icon {
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  color: #0f2943;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.org-card__icon:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.org-card__toggle {
+  rotate: 0deg;
+  transition: rotate 200ms ease;
+}
+
+.org-card__toggle.is-collapsed {
+  rotate: -90deg;
+}
+
+.org-tree-wrapper {
+  width: 100%;
+  min-height: 70vh;
+  padding: 2rem 1rem 3rem;
+  margin: 0 -1rem;
+}
+
+.org-tree-wrapper .rd3t-tree-container,
+.org-tree-wrapper .rd3t-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rd3t-link {
+  stroke: #dfe6f4 !important;
+  stroke-width: 2px !important;
+  fill: none;
+}
+
+.org-tree-card {
+  border: 2px solid #dfe6f4;
+  border-radius: 1.5rem;
+  padding: 1.25rem;
+  text-align: left;
+  background: white;
+  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.org-tree-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.org-tree-avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.org-tree-card__text {
+  flex: 1;
+}
+
+.org-tree-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #102a43;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.org-tree-card__meta {
+  font-size: 0.85rem;
+  color: #536b84;
+  margin-top: 0.1rem;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+.org-tree-card__description {
+  font-size: 0.85rem;
+  color: #2f4b6c;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.org-tree-card__actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.org-tree-icon {
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f2943;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.75rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: inset 0 0 0 1px rgba(15, 41, 67, 0.05);
+}
+
+.org-tree-icon:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.org-tree-icon--toggle {
+  rotate: 0deg;
+  transition: rotate 0.2s ease, background 0.2s ease;
+}
+
+.org-tree-icon--toggle.is-collapsed {
+  rotate: -90deg;
+}
+
 /* Glass morphism utility */
 .glass {
   background: rgba(255, 255, 255, 0.7);

@@ -1,10 +1,11 @@
 """Minimal utility functions."""
 
+import importlib.util
 import json
 import re
-import importlib.util
+import unicodedata
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 def get_all_scrapers() -> List[Dict]:
@@ -92,6 +93,26 @@ def load_scraper_module(org_dir: str):
         return module
     except:
         return None
+
+
+def normalize_name(name: Optional[str]) -> str:
+    """
+    Normalize names into filesystem-safe, slug-friendly tokens.
+
+    Converts to lowercase ASCII, swaps ampersands for "and", replaces
+    non-alphanumeric characters with underscores, and collapses repeats.
+    """
+    if not name:
+        return "unknown"
+
+    normalized = unicodedata.normalize('NFKD', str(name))
+    ascii_name = normalized.encode('ascii', 'ignore').decode('ascii')
+    ascii_name = ascii_name.replace('&', ' and ')
+
+    slug = re.sub(r'[^a-z0-9]+', '_', ascii_name.lower())
+    slug = re.sub(r'_+', '_', slug).strip('_')
+
+    return slug or "unknown"
 
 
 def clean_text(text: str) -> str:

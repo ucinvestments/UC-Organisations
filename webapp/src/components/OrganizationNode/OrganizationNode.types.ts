@@ -14,5 +14,4 @@ export interface Organization {
 export interface OrganizationNodeProps {
   organization: Organization;
   onInfoClick: (organization: Organization) => void;
-  level?: number;
 }

@@ -1,16 +1,74 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Modal, Button, SearchBar } from '@/src/design-system';
 import { Building2, Palette } from '@/src/design-system/icons';
 import { OrganizationNode, Organization } from '@/src/components/OrganizationNode';
-import { ucInvestmentsOrg, leadershipOrg, governanceOrg } from '@/src/data/organizations';
+import {
+  ucInvestmentsOrg,
+  leadershipOrg,
+  governanceOrg,
+} from '@/src/data/organizations';
+
+const cloneOrg = (org: Organization): Organization => ({
+  ...org,
+  children: org.children?.map(cloneOrg),
+});
+
+const buildChartRoot = (): Organization => ({
+  id: 'uc-org-root',
+  name: 'UC Organisations',
+  type: 'office',
+  description: 'University of California Investment Office structure',
+  children: [leadershipOrg, governanceOrg, ucInvestmentsOrg].map(cloneOrg),
+});
+
+const filterTree = (node: Organization, query: string): Organization | null => {
+  const normalized = query.toLowerCase();
+  const matches =
+    node.name.toLowerCase().includes(normalized) ||
+    node.type?.toLowerCase().includes(normalized) ||
+    node.description?.toLowerCase().includes(normalized);
+
+  const filteredChildren = node.children
+    ?.map((child) => filterTree(child, query))
+    .filter((child): child is Organization => Boolean(child));
+
+  if (matches || (filteredChildren && filteredChildren.length > 0)) {
+    return {
+      ...node,
+      children: filteredChildren,
+    };
+  }
+
+  return null;
+};
+
+const countNodes = (node: Organization | null | undefined): number => {
+  if (!node) return 0;
+  const childCount = node.children?.reduce(
+    (sum, child) => sum + countNodes(child),
+    0,
+  );
+  return 1 + (childCount || 0);
+};
 
 export default function Home() {
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const baseChart = useMemo(() => buildChartRoot(), []);
+
+  const filteredChart = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return baseChart;
+    }
+
+    const pruned = filterTree(baseChart, searchQuery.trim());
+    return pruned || { ...baseChart, children: [] };
+  }, [baseChart, searchQuery]);
 
   const handleInfoClick = (org: Organization) => {
     setSelectedOrg(org);
@@ -62,50 +120,51 @@ export default function Home() {
           />
         </div>
 
-        {/* Organization Charts */}
-        <div className="space-y-12">
-          {/* Leadership Section */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="h-1 w-12 bg-berkeley-blue rounded-full" />
-              <h2 className="text-2xl font-semibold text-berkeley-blue">
-                Leadership
+        {/* Chart Canvas */}
+        <section className="mt-10">
+          <div className="flex flex-wrap items-center gap-6 mb-4">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-california-gold">
+                Dynamic Org Chart
+              </p>
+              <h2 className="text-3xl font-semibold text-berkeley-blue">
+                UC Organisations Hierarchy
               </h2>
+              <p className="text-gray-600">
+                Expand nodes to explore reporting lines and committees.
+              </p>
             </div>
-            <OrganizationNode
-              organization={leadershipOrg}
-              onInfoClick={handleInfoClick}
-            />
-          </section>
+            <div className="ml-auto flex gap-4">
+              <div className="bg-white/80 border border-berkeley-blue/10 rounded-2xl px-5 py-3 text-center min-w-[140px] shadow-sm">
+                <p className="text-xs uppercase tracking-widest text-berkeley-blue/70">
+                  Total Nodes
+                </p>
+                <p className="text-2xl font-semibold text-berkeley-blue">
+                  {countNodes(filteredChart)}
+                </p>
+              </div>
+              <div className="bg-white/80 border border-california-gold/20 rounded-2xl px-5 py-3 text-center min-w-[140px] shadow-sm">
+                <p className="text-xs uppercase tracking-widest text-california-gold/80">
+                  Root Children
+                </p>
+                <p className="text-2xl font-semibold text-berkeley-blue">
+                  {filteredChart.children?.length ?? 0}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          {/* Governance Section */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="h-1 w-12 bg-west-gate rounded-full" />
-              <h2 className="text-2xl font-semibold text-berkeley-blue">
-                Governance
-              </h2>
-            </div>
-            <OrganizationNode
-              organization={governanceOrg}
-              onInfoClick={handleInfoClick}
-            />
-          </section>
+          <OrganizationNode
+            organization={filteredChart}
+            onInfoClick={handleInfoClick}
+          />
 
-          {/* Investment Office Section */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="h-1 w-12 bg-california-gold rounded-full" />
-              <h2 className="text-2xl font-semibold text-berkeley-blue">
-                Office of the Chief Investment Officer
-              </h2>
-            </div>
-            <OrganizationNode
-              organization={ucInvestmentsOrg}
-              onInfoClick={handleInfoClick}
-            />
-          </section>
-        </div>
+          {searchQuery && filteredChart.children?.length === 0 && (
+            <p className="text-center text-sm text-gray-500 mt-6">
+              No matches found. Try another search term.
+            </p>
+          )}
+        </section>
 
         {/* Info Box */}
         <div className="mt-12 bg-white border-2 border-berkeley-blue/20 rounded-xl p-6">
